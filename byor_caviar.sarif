@@ -1,0 +1,119 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Slither",
+          "informationUri": "https://github.com/crytic/slither",
+          "version": "0.10.0",
+          "rules": [
+            {
+              "id": "1-0-incorrect-equality",
+              "name": "incorrect-equality",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "4.0"
+              },
+              "shortDescription": {
+                "text": "Dangerous strict equalities"
+              },
+              "help": {
+                "text": "Don't use strict equality to determine if an account has enough Ether or tokens."
+              }
+            },
+            {
+              "id": "1-1-reentrancy-no-eth",
+              "name": "reentrancy-no-eth",
+              "properties": {
+                "precision": "high",
+                "security-severity": "4.0"
+              },
+              "shortDescription": {
+                "text": "Reentrancy vulnerabilities"
+              },
+              "help": {
+                "text": "Apply the [`check-effects-interactions` pattern](http://solidity.readthedocs.io/en/v0.4.21/security-considerations.html#re-entrancy)."
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "1-0-incorrect-equality",
+          "message": {
+            "text": "Pair.wrap(uint256[],bytes32[][]) (src/Pair.sol#217-243) uses a dangerous strict equality:\n\t- require(bool,string)(closeTimestamp == 0,Wrap: closed) (src/Pair.sol#224)\n",
+            "markdown": "[Pair.wrap(uint256[],bytes32[][])](projects/2022-12-caviar/src/Pair.sol#L217-L243) uses a dangerous strict equality:\n\t- [require(bool,string)(closeTimestamp == 0,Wrap: closed)](projects/2022-12-caviar/src/Pair.sol#L224)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/2022-12-caviar/src/Pair.sol"
+                },
+                "region": {
+                  "startLine": 217,
+                  "endLine": 243
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "86dd87520e4010b150daeac6009427b47c64447ad52bc55e028925f20dd530ab"
+          }
+        },
+        {
+          "ruleId": "1-1-reentrancy-no-eth",
+          "message": {
+            "text": "Reentrancy in Pair.nftSell(uint256[],uint256,bytes32[][]) (src/Pair.sol#323-332):\n\tExternal calls:\n\t- inputAmount = wrap(tokenIds,proofs) (src/Pair.sol#328)\n\t\t- ERC721(nft).safeTransferFrom(msg.sender,address(this),tokenIds[i]) (src/Pair.sol#239)\n\tState variables written after the call(s):\n\t- outputAmount = sell(inputAmount,minOutputAmount) (src/Pair.sol#331)\n\t\t- balanceOf[from] -= amount (src/Pair.sol#448)\n\t\t- balanceOf[to] += amount (src/Pair.sol#453)\n\tERC20.balanceOf (lib/solmate/src/tokens/ERC20.sol#33) can be used in cross function reentrancies:\n\t- ERC20._burn(address,uint256) (lib/solmate/src/tokens/ERC20.sol#195-205)\n\t- ERC20._mint(address,uint256) (lib/solmate/src/tokens/ERC20.sol#183-193)\n\t- Pair._transferFrom(address,address,uint256) (src/Pair.sol#447-459)\n\t- ERC20.balanceOf (lib/solmate/src/tokens/ERC20.sol#33)\n\t- Pair.fractionalTokenReserves() (src/Pair.sol#383-385)\n\t- ERC20.transfer(address,uint256) (lib/solmate/src/tokens/ERC20.sol#76-88)\n\t- ERC20.transferFrom(address,address,uint256) (lib/solmate/src/tokens/ERC20.sol#90-110)\n",
+            "markdown": "Reentrancy in [Pair.nftSell(uint256[],uint256,bytes32[][])](projects/2022-12-caviar/src/Pair.sol#L323-L332):\n\tExternal calls:\n\t- [inputAmount = wrap(tokenIds,proofs)](projects/2022-12-caviar/src/Pair.sol#L328)\n\t\t- [ERC721(nft).safeTransferFrom(msg.sender,address(this),tokenIds[i])](projects/2022-12-caviar/src/Pair.sol#L239)\n\tState variables written after the call(s):\n\t- [outputAmount = sell(inputAmount,minOutputAmount)](projects/2022-12-caviar/src/Pair.sol#L331)\n\t\t- [balanceOf[from] -= amount](projects/2022-12-caviar/src/Pair.sol#L448)\n\t\t- [balanceOf[to] += amount](projects/2022-12-caviar/src/Pair.sol#L453)\n\t[ERC20.balanceOf](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L33) can be used in cross function reentrancies:\n\t- [ERC20._burn(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L195-L205)\n\t- [ERC20._mint(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L183-L193)\n\t- [Pair._transferFrom(address,address,uint256)](projects/2022-12-caviar/src/Pair.sol#L447-L459)\n\t- [ERC20.balanceOf](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L33)\n\t- [Pair.fractionalTokenReserves()](projects/2022-12-caviar/src/Pair.sol#L383-L385)\n\t- [ERC20.transfer(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L76-L88)\n\t- [ERC20.transferFrom(address,address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L90-L110)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/2022-12-caviar/src/Pair.sol"
+                },
+                "region": {
+                  "startLine": 323,
+                  "endLine": 332
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "40456e759b2b0428ae1640ac6e245af1eab9e936374806d8669940a97ba6a9da"
+          }
+        },
+        {
+          "ruleId": "1-2-second-reentrancy-no-eth",
+          "message": {
+            "text": "Reentrancy in Pair.nftAdd(uint256,uint256[],uint256,bytes32[][]) (src/Pair.sol#275-286):\n\tExternal calls:\n\t- fractionalTokenAmount = wrap(tokenIds,proofs) (src/Pair.sol#282)\n\t\t- ERC721(nft).safeTransferFrom(msg.sender,address(this),tokenIds[i]) (src/Pair.sol#239)\n\t- lpTokenAmount = add(baseTokenAmount,fractionalTokenAmount,minLpTokenAmount) (src/Pair.sol#285)\n\t\t- lpToken.mint(msg.sender,lpTokenAmount) (src/Pair.sol#90)\n\tState variables written after the call(s):\n\t- lpTokenAmount = add(baseTokenAmount,fractionalTokenAmount,minLpTokenAmount) (src/Pair.sol#285)\n\t\t- balanceOf[from] -= amount (src/Pair.sol#448)\n\t\t- balanceOf[to] += amount (src/Pair.sol#453)\n\tERC20.balanceOf (lib/solmate/src/tokens/ERC20.sol#33) can be used in cross function reentrancies:\n\t- ERC20._burn(address,uint256) (lib/solmate/src/tokens/ERC20.sol#195-205)\n\t- ERC20._mint(address,uint256) (lib/solmate/src/tokens/ERC20.sol#183-193)\n\t- Pair._transferFrom(address,address,uint256) (src/Pair.sol#447-459)\n\t- ERC20.balanceOf (lib/solmate/src/tokens/ERC20.sol#33)\n\t- Pair.fractionalTokenReserves() (src/Pair.sol#383-385)\n\t- ERC20.transfer(address,uint256) (lib/solmate/src/tokens/ERC20.sol#76-88)\n\t- ERC20.transferFrom(address,address,uint256) (lib/solmate/src/tokens/ERC20.sol#90-110)\n",
+            "markdown": "Reentrancy in [Pair.nftAdd(uint256,uint256[],uint256,bytes32[][])](projects/2022-12-caviar/src/Pair.sol#L275-L286):\n\tExternal calls:\n\t- [fractionalTokenAmount = wrap(tokenIds,proofs)](projects/2022-12-caviar/src/Pair.sol#L282)\n\t\t- [ERC721(nft).safeTransferFrom(msg.sender,address(this),tokenIds[i])](projects/2022-12-caviar/src/Pair.sol#L239)\n\t- [lpTokenAmount = add(baseTokenAmount,fractionalTokenAmount,minLpTokenAmount)](projects/2022-12-caviar/src/Pair.sol#L285)\n\t\t- [lpToken.mint(msg.sender,lpTokenAmount)](projects/2022-12-caviar/src/Pair.sol#L90)\n\tState variables written after the call(s):\n\t- [lpTokenAmount = add(baseTokenAmount,fractionalTokenAmount,minLpTokenAmount)](projects/2022-12-caviar/src/Pair.sol#L285)\n\t\t- [balanceOf[from] -= amount](projects/2022-12-caviar/src/Pair.sol#L448)\n\t\t- [balanceOf[to] += amount](projects/2022-12-caviar/src/Pair.sol#L453)\n\t[ERC20.balanceOf](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L33) can be used in cross function reentrancies:\n\t- [ERC20._burn(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L195-L205)\n\t- [ERC20._mint(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L183-L193)\n\t- [Pair._transferFrom(address,address,uint256)](projects/2022-12-caviar/src/Pair.sol#L447-L459)\n\t- [ERC20.balanceOf](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L33)\n\t- [Pair.fractionalTokenReserves()](projects/2022-12-caviar/src/Pair.sol#L383-L385)\n\t- [ERC20.transfer(address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L76-L88)\n\t- [ERC20.transferFrom(address,address,uint256)](projects/2022-12-caviar/lib/solmate/src/tokens/ERC20.sol#L90-L110)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "projects/2022-12-caviar/src/Pair.sol"
+                },
+                "region": {
+                  "startLine": 275,
+                  "endLine": 286
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "8890958d2b92bf7617c5cba8a8848cdd030460b3c1e73987c40c96a539ff58e6"
+          }
+        }
+      ]
+    }
+  ]
+}
